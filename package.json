@@ -1,0 +1,51 @@
+{
+  "name": "engineering-project-backend",
+  "version": "0.0.0",
+  "repository": "https://github.com/hejmsdz/engineering-project-backend.git",
+  "contributors": [
+    "Tomasz Gil",
+    "Piotr Janiszewski",
+    "Piotr Ptak",
+    "Mikołaj Rozwadowski"
+  ],
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www",
+    "start-dev": "nodemon ./bin/www",
+    "test": "jest"
+  },
+  "jest": {
+    "setupTestFrameworkScriptFile": "./test/setup.js",
+    "testEnvironment": "node"
+  },
+  "dependencies": {
+    "@google/maps": "^0.5.5",
+    "bcrypt": "^3.0.2",
+    "celebrate": "^9.0.2",
+    "cookie-parser": "~1.4.3",
+    "cors": "^2.8.5",
+    "debug": "~2.6.9",
+    "dotenv": "^6.1.0",
+    "express": "~4.16.0",
+    "jest": "^23.6.0",
+    "js-yaml": "^3.12.0",
+    "jsonwebtoken": "^8.4.0",
+    "mongoose": "^5.3.14",
+    "mongoose-beautiful-unique-validation": "^7.1.1",
+    "morgan": "~1.9.0",
+    "ngraph.graph": "^0.0.15",
+    "ngraph.path": "^1.0.3",
+    "node-tspsolver": "^1.0.1",
+    "node-wit": "^5.0.0",
+    "supertest": "^3.3.0",
+    "swagger-ui-express": "^4.0.1"
+  },
+  "devDependencies": {
+    "eslint": "^5.6.1",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "faker": "^4.1.0",
+    "nodemon": "^1.18.5"
+  }
+}

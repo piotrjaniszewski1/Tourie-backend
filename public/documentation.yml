@@ -1,0 +1,475 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Mobile Intelligent City Guide API
+  description: Mobile Intelligent City Guide API
+paths:
+  /auth/login:
+    post:
+      security: []
+      tags:
+        - Authentication
+      summary: Obtain an access token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                email:
+                  type: string
+                  example: john.doe@gmail.com
+                password:
+                  type: string
+                  example: cl4nd3sT!n0
+              required:
+                - email
+                - password
+      responses:
+        200:
+          description: If the login was successful, contains access token and current user details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthSuccess'
+        401:
+          description: If the login failed, contains an error message
+          content:
+            application/json:
+              schema:
+                properties:
+                  error:
+                    type: string
+                    example: wrong credentials
+  /users:
+    post:
+      security: []
+      tags:
+        - Users
+        - Authentication
+      summary: Register a new user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                email:
+                  type: string
+                  example: john.doe@gmail.com
+                  uniqueItems: true
+                name:
+                  type: string
+                  example: John Doe
+                password:
+                  type: string
+                  example: cl4nd3sT!n0
+              required:
+                - name
+                - email
+                - password
+      responses:
+        200:
+          description: If the signup was successful, contains access token and newly created user's details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthSuccess'
+        422:
+          $ref: '#/components/responses/UnprocessableEntity'
+  /users/me:
+    get:
+      tags:
+        - Users
+      summary: Get the current user's id, name and email
+      responses:
+        200:
+          description: The current user's details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+    patch:
+      tags:
+        - Users
+      summary: Change current user's details
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                email:
+                  type: string
+                  example: john.doe@gmail.com
+                  uniqueItems: true
+                name:
+                  type: string
+                  example: John Doe
+                password:
+                  type: string
+                  example: e$c0nd!do
+                currentPassword:
+                  type: string
+                  example: cl4nd3sT!n0
+              required:
+                - currentPassword
+      responses:
+        200:
+          description: If the update was successful
+        403:
+          description: If currentPassword is wrong
+    delete:
+      tags:
+        - Users
+      summary: Remove current user and his tour routes
+      responses:
+        200:
+          description: User and his routes correctly removed
+  /categories:
+    get:
+      tags:
+        - Categories
+      summary: List available categories to which places are assigned
+      responses:
+        200:
+          description: A list of categories
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Categories'
+  /places/favorites:
+    post:
+      tags:
+        - Users
+        - Places
+      summary: Add a place to user's favorite places list
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                id:
+                  type: string
+                  example: 5c16c2987afb8fc46f5d308d
+      responses:
+        200:
+          description: Place has been added properly
+        422:
+          $ref: '#/components/responses/UnprocessableEntity'
+  /routes:
+    get:
+      tags:
+        - Routes
+      summary: Get current user's saved and shared routes
+      responses:
+        200:
+          description: List of saved and shared routes
+          content:
+            application/json:
+              schema:
+                properties:
+                  saved:
+                    description: Saved routes
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/RouteSummary'
+                  shared:
+                    description: Other user's routes shared with you
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SharedRouteSummary'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      tags:
+        - Routes
+      summary: Save a new route
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                name:
+                  type: string
+                  example: Museums of London
+                places:
+                  type: array
+                  description: List of place IDs to include in the route
+                  example:
+                    - 5c16c2987afb8fc46f5d308d
+                    - 5c16c2a0123c85db5541e19f
+                    - 5c16c2a016ce7bc8ad8262c5
+                  items:
+                    type: string
+                    uniqueItems: true
+              required:
+                - name
+                - places
+      responses:
+        201:
+          description: Details of the newly created route
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RouteDetails'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        422:
+          $ref: '#/components/responses/UnprocessableEntity'
+  /routes/{id}:
+    get:
+      tags:
+        - Routes
+      summary: Get details of a route
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: Route identifier
+          example: 5c16c32972fbbd327d344679
+      responses:
+        200:
+          description: Details of the route
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RouteDetails'
+        404:
+          description: When a route could not be found
+  /routes/{id}/finish:
+    post:
+      tags:
+        - Routes
+      summary: Mark a route as finished
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: Route identifier
+          example: 5c16c32972fbbd327d344679
+      responses:
+        200:
+          description: When the status of the route has been set to 'finished' successfully
+        404:
+          description: When a route could not be found
+  /routes/generate:
+    post:
+      tags:
+        - Routes
+      summary: Generate a route
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                categories:
+                  type: array
+                  items:
+                    type: string
+                  example:
+                    - culture
+                    - food
+                duration:
+                  type: number
+                  minimum: 1
+                  maximum: 12
+                  example: 4
+                priceLevel:
+                  type: number
+                  minimum: 0
+                  maximum: 3
+                  example: 1
+              required:
+                - categories
+                - duration
+                - priceLevel
+      responses:
+        200:
+          description: Suggested route
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewRouteDetails'
+  /wit:
+    get:
+      tags:
+        - Wit
+      summary: Get wit specified response from user message
+      parameters:
+        - in: query
+          name: message
+          schema:
+            type: string
+          description: The user message that will be processed by Wit
+      responses:
+        200:
+          $ref: '#/components/responses/WitActionFound'
+        404:
+          $ref: '#/components/responses/WitActionNotFound'
+servers:
+  - url: 'http://localhost:4000/'
+    description: Local server
+  - url: 'https://tourie-dev.herokuapp.com/'
+    description: Continuous integration server
+  - url: 'https://tourie-prod.herokuapp.com/'
+    description: Production server
+security:
+  - bearerAuth: []
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT      
+  schemas:
+    User:
+      properties:
+        id:
+          type: string
+          example: 5bfc5ca709ddb413ab9b7f27
+          uniqueItems: true
+        name:
+          type: string
+          example: John Doe
+        email:
+          type: string
+          example: john.doe@gmail.com
+          uniqueItems: true
+    AuthSuccess:
+      properties:
+        token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+          description: JSON Web Token that lets you authorize your requests
+        userName:
+          type: string
+          example: John Doe
+          description: Name of the successfully authenticated user
+        userEmail:
+          type: string
+          example: john.doe@gmail.com
+          description: Email address of the successfully authenticated user
+    RouteSummary:
+      properties:
+        id:
+          type: string
+          example: 5c0ce80c9ef52322df1099fc
+        name:
+          type: string
+          example: Museums of London
+        placesCount:
+          type: integer
+          example: 23
+        lastFinishedAt:
+          type: string
+          example: '2019-01-16T17:27:07.710Z'
+    SharedRouteSummary:
+      allOf:
+        - $ref: '#/components/schemas/RouteSummary'
+        - properties:
+            sharedBy:
+              type: string
+              description: Name of the user who shared this route with you
+              example: Paul
+    NewRouteDetails:
+      properties:
+        name:
+          type: string
+          example: Museums of London
+        places:
+          type: array
+          description: Details of places included in this route
+          items:
+            $ref: '#/components/schemas/PlaceDetails'
+    RouteDetails:
+      allOf:
+        - properties:
+            id:
+              type: string
+              example: 5c16c32972fbbd327d344679
+              uniqueItems: true
+        - $ref: '#/components/schemas/NewRouteDetails'
+    Categories:
+      type: array
+      items:
+        properties:
+          id:
+            type: string
+            uniqueItems: true
+          name:
+            type: string
+      example:
+        - id: culture
+          name: Culture
+        - id: outdoorLeisure
+          name: Outdoor leisure
+        - id: shopping
+          name: Shopping
+    PlaceDetails:
+      properties:
+        id:
+          type: string
+          example: 5c16c43b26ba502f439f910a
+          uniqueItems: true
+        name:
+          type: string
+          example: British Museum
+        categories:
+          type: array
+          items:
+            type: string
+          example:
+            - culture
+        address:
+          type: string
+          example: Great Russell Street
+        photoReference:
+          type: string
+          example: AF1QipNE6fTYnjbH9U1
+  responses:
+    UnprocessableEntity:
+      description: If the request parameters were invalid
+      content:
+        application/json:
+          schema:
+            properties:
+              message:
+                type: string
+                example: there were some errors in your input
+              errors:
+                type: object
+                example:
+                  name: Path `name` is required.
+    Unauthorized:
+      description: If a supplied access token is invalid
+      content:
+        application/json:
+          schema:
+            properties:
+              message:
+                type: string
+                example:
+                  name: invalid signature
+    WitActionFound:
+      description: If wit recognized user intent
+      content:
+        application/json:
+          schema:
+            properties:
+              intent:
+                type: string
+                example: settings_screen
+                uniqueItems: true
+    WitActionNotFound:
+      description: If wit didn't recognize user intent
+      content:
+        application/json:
+          schema:
+            properties:
+              wit:
+                type: string
+                example: Action not specified.
