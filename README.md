@@ -1,28 +1,60 @@
-# engineering-project-backend
+# **Tourie**
 
-## Getting started
+This is a back-end part of the **Tourie** mobile application.
 
-### Requirements
+## Table of contents
+* [General info](#general-info)
+* [Requirements](#requirements)
+* [Technologies](#technologies)
+* [Third-party](#third-party)
+* [Setup](#setup)
+* [Features](#features)
+* [Environment variables](#environment-variables)
+* [Available scripts](#available-scripts)
+* [Contact](#contact)
 
+## General info
+
+This is **Tourie** a smart city guide, that may help one to find amazing places in any city, provide plenty of information about them and plan a city tour using a dedicated recommender system. It was implemented as a Progressive Web Application.
+
+## Requirements
 * Node.js
-* Yarn
 * MongoDB
-* ESLint (optionally)
+* Yarn
+* Corresponding front-end application
 
-### Setup
+## Technologies
+* JavaScript
+* Node.js
+* MongoDB
 
+## Third-party
+* Google Maps API
+* Google Places API
+* Google Roads API
+* Wit.ai
+
+## Setup
 ```bash
-git clone git@github.com:hejmsdz/engineering-project-backend.git
-cd engineering-project-backend
+git clone https://github.com/piotrjaniszewski1/Tourie-backend.git
+cd Tourie-backend
 yarn
 ```
 
-### Running the app
-
-```bash
-yarn start # start normally
-yarn run start-dev # automatic restarting
-```
+## Features
+* Database with various places assigned to various categories
+* User accounts (creating account, logging in, altering user data, deleting account)
+* Creating routes - user chooses categories / time / starting point
+* Showing full route before accepting it
+* Travel mode - after accepting the route user sees list of places on the route, information about the place, sort of a navigation while traveling
+* Application can be run from the phone's desktop
+* Application works to certain extent when offline
+* Performing action with voice commands
+* History of previous routes
+* Planning routes for the future (without immediately going to travel mode)
+* Saving favourite places, routes, whatever
+* Quick edit of places in route before accepting it
+* Route statistics
 
 ### Environment variables
 
@@ -36,6 +68,26 @@ WIT_ACCESS_TOKEN=... # get it from https://wit.ai/your-username/your-app/setting
 PORT=3000
 ```
 
-## Development
+## Available Scripts
 
-[Contributing guidelines](https://github.com/hejmsdz/engineering-project/wiki/Contributing-guidelines)
+### `yarn start`
+
+Runs the app in the development mode.<br>
+Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+
+The page will reload if you make edits.<br>
+You will also see any lint errors in the console.
+
+### `yarn build`
+
+Builds the app for production to the `build` folder.<br>
+It correctly bundles React in production mode and optimizes the build for the best performance.
+
+## Authors
+Created by students from Poznań University of Technology:
+* [Piotr Janiszewski](mailto:1piotr.janiszewski@gmail.com)
+* Tomasz Gil
+* Piotr Ptak
+* Mikołaj Rozwadowski
+
+Feel free to contact us!
